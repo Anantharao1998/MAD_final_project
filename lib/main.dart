@@ -1,0 +1,107 @@
+// ignore_for_file: camel_case_types, avoid_print, prefer_const_constructors, unnecessary_null_comparison, unrelated_type_equality_checks
+
+import 'package:final_project/createPost.dart';
+import 'package:final_project/postPage.dart';
+import 'package:flutter/material.dart';
+import 'package:web_socket_channel/io.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      initialRoute: '/',
+      routes: {
+        '/postpage': (context) => PostPage(),
+        '/postdetailspage': (context) => CreatePost()
+      },
+      debugShowCheckedModeBanner: false,
+      title: 'Final Project',
+      theme: ThemeData(
+        primarySwatch: Colors.purple,
+      ),
+      home: const signInPage(),
+    );
+  }
+}
+
+class signInPage extends StatefulWidget {
+  const signInPage({Key? key}) : super(key: key);
+
+  @override
+  _SignInPageState createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<signInPage> {
+  TextEditingController username = TextEditingController();
+  final channel =
+      IOWebSocketChannel.connect('ws://besquare-demo.herokuapp.com');
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        color: Colors.purple,
+        child: Column(
+          // ignore: prefer_const_literals_to_create_immutables
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(50.0),
+              child: Text(
+                'Lategram',
+                style: TextStyle(
+                  fontSize: 50,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const Divider(
+              height: 30.0,
+            ),
+            Center(
+              child: Container(
+                margin: const EdgeInsets.only(
+                  left: 30,
+                  right: 30,
+                ),
+                color: Colors.white,
+                child: TextFormField(
+                  textAlign: TextAlign.center,
+                  textAlignVertical: TextAlignVertical.center,
+                  controller: username,
+                  decoration: const InputDecoration(
+                    hintText: 'Input your username',
+                  ),
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                (username.text.isEmpty)
+                    ? {print('username is empty')}
+                    : {
+                        _signInUser(),
+                        Navigator.popAndPushNamed(context, '/postpage'),
+                      };
+              },
+              child: const Text(
+                'Sign-In',
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  _signInUser() {
+// Sending user sign in request
+    channel.sink.add('{"type":"sign_in","data":{"name":"$username"}}');
+  }
+}
