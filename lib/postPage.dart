@@ -6,6 +6,7 @@ import 'package:final_project/cubit/main_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:web_socket_channel/io.dart';
+import 'package:favorite_button/favorite_button.dart';
 
 class PostPage extends StatefulWidget {
   const PostPage({Key? key}) : super(key: key);
@@ -224,15 +225,22 @@ class _PostPageState extends State<PostPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      IconButton(
-                                          onPressed: () {
+                                      FavoriteButton(
+                                          iconSize: 30.0,
+                                          valueChanged: (isFavorite) {
                                             setState(() {
                                               isFavorite = true;
-
-                                              print(favoritePosts.length);
+                                              if (favoritePosts
+                                                  .contains(posts[index])) {
+                                                favoritePosts
+                                                    .remove(posts[index]);
+                                                print('item already added');
+                                              } else {
+                                                favoritePosts.add(posts[index]);
+                                              }
+                                              print(favoritePosts);
                                             });
-                                          },
-                                          icon: Icon(Icons.favorite)),
+                                          }),
                                     ],
                                   ),
                                 )),
