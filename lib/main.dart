@@ -68,39 +68,45 @@ class _SignInPageState extends State<signInPage> {
                 ),
               ),
             ),
-            const Divider(
-              height: 30.0,
-            ),
-            Center(
-              child: Container(
-                margin: const EdgeInsets.only(
-                  left: 30,
-                  right: 30,
-                ),
-                color: Colors.white,
-                child: TextFormField(
-                  textAlign: TextAlign.center,
-                  textAlignVertical: TextAlignVertical.center,
-                  controller: username,
-                  decoration: const InputDecoration(
-                    hintText: 'Input your username',
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                    child: Container(
+                      color: Colors.white,
+                      child: TextFormField(
+                        textAlign: TextAlign.center,
+                        textAlignVertical: TextAlignVertical.center,
+                        controller: username,
+                        decoration: const InputDecoration(
+                          hintText: 'Input your username',
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  TextButton(
+                    onPressed: () {
+                      (username.text.isEmpty)
+                          ? {print('username is empty')}
+                          : {
+                              _signInUser(),
+                              Navigator.popAndPushNamed(context, '/postpage'),
+                            };
+                    },
+                    child: const Text(
+                      'Sign-In',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                (username.text.isEmpty)
-                    ? {print('username is empty')}
-                    : {
-                        _signInUser(),
-                        Navigator.popAndPushNamed(context, '/postpage'),
-                      };
-              },
-              child: const Text(
-                'Sign-In',
-              ),
-            )
           ],
         ),
       ),
@@ -109,6 +115,6 @@ class _SignInPageState extends State<signInPage> {
 
   _signInUser() {
 // Sending user sign in request
-    context.read<MainCubit>().login(username);
+    context.read<MainCubit>().login(username.text);
   }
 }

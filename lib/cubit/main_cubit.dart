@@ -6,7 +6,7 @@ import 'package:web_socket_channel/io.dart';
 class MainCubit extends Cubit<String> {
   MainCubit() : super('');
   List posts = [];
-  String Name = '';
+  var username = '';
   dynamic decodedMessage;
 
   final channel =
@@ -20,9 +20,9 @@ class MainCubit extends Cubit<String> {
   // }
 
   void login(name) {
-    // Name = name;
-    // emit(name);
+    username = name;
     channel.sink.add('{"type": "sign_in", "data": {"name": "$name"}}');
+    print(username);
   }
 
   void getPosts() {
@@ -34,6 +34,7 @@ class MainCubit extends Cubit<String> {
   }
 
   void createPost(name, title, description, url) {
+    print(username);
     channel.sink.add('{"type": "sign_in", "data": {"name": "$name"}}');
 
     channel.sink.add(
