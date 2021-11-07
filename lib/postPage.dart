@@ -87,6 +87,17 @@ class _PostPageState extends State<PostPage> {
         appBar: AppBar(
           actions: [
             IconButton(
+                onPressed: () {
+                  setState(() {
+                    if (favouriteClicked == true) {
+                      favouriteClicked = false;
+                    } else {
+                      favouriteClicked = true;
+                    }
+                  });
+                },
+                icon: Icon(Icons.face_outlined)),
+            IconButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/createpost');
               },
@@ -133,7 +144,7 @@ class _PostPageState extends State<PostPage> {
           ),
           backgroundColor: Colors.purpleAccent,
         ),
-        body: (favouriteClicked = true)
+        body: (favouriteClicked == false)
             ? BlocBuilder<MainCubit, String>(
                 builder: (context, index) {
                   return ListView.builder(
@@ -249,8 +260,97 @@ class _PostPageState extends State<PostPage> {
                       });
                 },
               )
-            : Container(
-                color: Colors.red,
+            : BlocBuilder<MainCubit, String>(
+                builder: (context, state) {
+                  return ListView.builder(
+                      itemCount: favoritePosts.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          elevation: 10.0,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PostDetails(
+                                    name: posts[index]['author'],
+                                    title: posts[index]['title'],
+                                    description: posts[index]['description'],
+                                    url: posts[index]['image'],
+                                  ),
+                                ),
+                              );
+                              // Move to post details page
+                            },
+                            onLongPress: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return BlocProvider(
+                                      create: (context) => MainCubit(),
+                                      child: BlocBuilder<MainCubit, String>(
+                                        builder: (context, state) {
+                                          return AlertDialog(
+                                            title: const Text("Delete Post"),
+                                            content: Column(
+                                              // ignore: prefer_const_literals_to_create_immutables
+                                              children: [
+                                                TextFormField(
+                                                  controller: name,
+                                                ),
+                                                Text(
+                                                    "Do you want to delete this post?"),
+                                              ],
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  setState(() {
+                                                    deletePost(
+                                                        '${posts[index]['_id']}',
+                                                        name.text);
+
+                                                    Navigator.of(context).pop();
+                                                  });
+                                                },
+                                                child: Text('Delete'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text("Cancel"),
+                                              )
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  });
+                            },
+                            child: Container(
+                                padding: EdgeInsets.all(10.0),
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundImage: NetworkImage(Uri.parse(
+                                                    posts[index]['image'])
+                                                .isAbsolute &&
+                                            posts[index].containsKey('image')
+                                        ? '${posts[index]['image']}'
+                                        : 'https://image.freepik.com/free-vector/bye-bye-cute-emoji-cartoon-character-yellow-backround_106878-540.jpg'),
+                                  ),
+                                  title: Text(
+                                    '${posts[index]["title"].toString().characters.take(20)}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Text(
+                                      'Created by ${posts[index]["author"].toString().characters.take(15)} on ${posts[index]["date"].toString().characters.take(10)}'),
+                                )),
+                          ),
+                        );
+                      });
+                },
               ),
       ),
     );
