@@ -1,5 +1,7 @@
 // ignore_for_file: non_constant_identifier_names, avoid_print
 
+import 'dart:convert';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:web_socket_channel/io.dart';
 
@@ -12,17 +14,16 @@ class MainCubit extends Cubit<String> {
   final channel =
       IOWebSocketChannel.connect('ws://besquare-demo.herokuapp.com');
 
-  // void openChannel() {
-  //   channel.stream.listen((message) {
-  //     decodedMessage = jsonDecode(message);
-  //     print(decodedMessage);
-  //   });
-  // }
+  void openChannel() {
+    channel.stream.listen((message) {
+      decodedMessage = jsonDecode(message);
+      print(decodedMessage);
+    });
+  }
 
   void login(name) {
     username = name;
-    channel.sink.add('{"type": "sign_in", "data": {"name": "$name"}}');
-    print(username);
+    channel.sink.add('{"type": "sign_in", "data": {"name": "$username"}}');
   }
 
   void getPosts() {
@@ -34,7 +35,6 @@ class MainCubit extends Cubit<String> {
   }
 
   void createPost(name, title, description, url) {
-    print(username);
     channel.sink.add('{"type": "sign_in", "data": {"name": "$name"}}');
 
     channel.sink.add(

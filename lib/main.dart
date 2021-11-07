@@ -21,7 +21,12 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/postpage': (context) => PostPage(),
-        '/postdetails': (context) => PostDetails(),
+        '/postdetails': (context) => PostDetails(
+              url: '',
+              name: '',
+              title: '',
+              description: '',
+            ),
         '/createpost': (context) => CreatePost()
       },
       debugShowCheckedModeBanner: false,
@@ -81,7 +86,7 @@ class _SignInPageState extends State<signInPage> {
                         textAlignVertical: TextAlignVertical.center,
                         controller: username,
                         decoration: const InputDecoration(
-                          hintText: 'Input your username',
+                          hintText: 'Username',
                         ),
                       ),
                     ),
