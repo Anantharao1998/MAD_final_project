@@ -34,9 +34,7 @@ class MainCubit extends Cubit<String> {
     channel.sink.add('{"type": "delete_post", "data": {"postId": "$_id"}}');
   }
 
-  void createPost(name, title, description, url) {
-    channel.sink.add('{"type": "sign_in", "data": {"name": "$name"}}');
-
+  void createPost(title, description, url) {
     channel.sink.add(
         '{"type": "create_post", "data": {"title": "$title", "description": "$description", "image": "$url"}}');
   }

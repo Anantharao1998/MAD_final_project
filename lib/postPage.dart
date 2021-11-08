@@ -1,27 +1,29 @@
-// ignore_for_file: file_names, prefer_const_constructors, avoid_print, unnecessary_string_interpolations
+// ignore_for_file: file_names, prefer_const_constructors, avoid_print, unnecessary_string_interpolations, annotate_overrides, no_logic_in_create_state
 
 import 'dart:convert';
 import 'package:final_project/PostDetail.dart';
+import 'package:final_project/createPost.dart';
 import 'package:final_project/cubit/main_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:web_socket_channel/io.dart';
 import 'package:favorite_button/favorite_button.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 class PostPage extends StatefulWidget {
-  const PostPage({Key? key}) : super(key: key);
+  const PostPage({Key? key, required this.channel}) : super(key: key);
+  final WebSocketChannel channel;
 
-  @override
-  _PostPageState createState() => _PostPageState();
+  State<StatefulWidget> createState() {
+    return _PostPageState(channel);
+  }
 }
 
 class _PostPageState extends State<PostPage> {
+  _PostPageState(this.channel);
+  WebSocketChannel channel;
   TextEditingController name = TextEditingController();
   bool isFavorite = false;
   bool favouriteClicked = false;
-
-  final channel =
-      IOWebSocketChannel.connect('ws://besquare-demo.herokuapp.com');
 
   List posts = [];
   List favoritePosts = [];
@@ -38,9 +40,9 @@ class _PostPageState extends State<PostPage> {
     channel.sink.add('{"type": "get_posts"}');
   }
 
-  sortDate() {
-    for (int i = 0; i >= posts.length; i++) {}
-  }
+  // sortDate() {
+  //   for (int i = 0; i >= posts.length; i++) {}
+  // }
 
   @override
   void initState() {
@@ -74,11 +76,6 @@ class _PostPageState extends State<PostPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextButton(onPressed: () {}, child: Text('About Our App')),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.popAndPushNamed(context, '/');
-                      },
-                      child: Text('Log Out')),
                 ],
               )
             ],
@@ -99,7 +96,10 @@ class _PostPageState extends State<PostPage> {
                 icon: Icon(Icons.face_outlined)),
             IconButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/createpost');
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => CreatePost(channel: channel)));
               },
               icon: Icon(Icons.add),
             ),
@@ -147,6 +147,7 @@ class _PostPageState extends State<PostPage> {
         body: (favouriteClicked == false)
             ? BlocBuilder<MainCubit, String>(
                 builder: (context, index) {
+                  print(posts.length);
                   return ListView.builder(
                       itemCount: posts.length,
                       itemBuilder: (context, index) {
@@ -191,9 +192,10 @@ class _PostPageState extends State<PostPage> {
                                               TextButton(
                                                 onPressed: () {
                                                   setState(() {
-                                                    deletePost(
-                                                        '${posts[index]['_id']}',
-                                                        name.text);
+                                                    context
+                                                        .read<MainCubit>()
+                                                        .delete(posts[index]
+                                                            ['_id']);
 
                                                     Navigator.of(context).pop();
                                                   });
@@ -292,23 +294,14 @@ class _PostPageState extends State<PostPage> {
                                         builder: (context, state) {
                                           return AlertDialog(
                                             title: const Text("Delete Post"),
-                                            content: Column(
-                                              // ignore: prefer_const_literals_to_create_immutables
-                                              children: [
-                                                TextFormField(
-                                                  controller: name,
-                                                ),
-                                                Text(
-                                                    "Do you want to delete this post?"),
-                                              ],
-                                            ),
+                                            content: Text(
+                                                "Do you want to delete this post?"),
                                             actions: [
                                               TextButton(
                                                 onPressed: () {
                                                   setState(() {
-                                                    deletePost(
-                                                        '${posts[index]['_id']}',
-                                                        name.text);
+                                                    context.read().delete(
+                                                        posts[index]['_id']);
 
                                                     Navigator.of(context).pop();
                                                   });
@@ -354,18 +347,5 @@ class _PostPageState extends State<PostPage> {
               ),
       ),
     );
-  }
-
-  void deletePost(postID, name) {
-    try {
-      final channel =
-          IOWebSocketChannel.connect('ws://besquare-demo.herokuapp.com');
-
-      channel.sink.add('{"type": "sign_in", "data": {"name": "$name"}}');
-
-      channel.sink.add('{"type":"delete_post","data":{"postId":"$postID"}}');
-    } catch (e) {
-      // Catch error if you are not the owner of the post
-    }
   }
 }

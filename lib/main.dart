@@ -1,7 +1,6 @@
 // ignore_for_file: camel_case_types, avoid_print, prefer_const_constructors, unnecessary_null_comparison, unrelated_type_equality_checks
 
 import 'package:final_project/PostDetail.dart';
-import 'package:final_project/createPost.dart';
 import 'package:final_project/cubit/main_cubit.dart';
 import 'package:final_project/postPage.dart';
 import 'package:flutter/material.dart';
@@ -20,14 +19,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/',
       routes: {
-        '/postpage': (context) => PostPage(),
         '/postdetails': (context) => PostDetails(
               url: '',
               name: '',
               title: '',
               description: '',
             ),
-        '/createpost': (context) => CreatePost()
       },
       debugShowCheckedModeBanner: false,
       title: 'Final Project',
@@ -97,7 +94,11 @@ class _SignInPageState extends State<signInPage> {
                           ? {print('username is empty')}
                           : {
                               _signInUser(),
-                              Navigator.popAndPushNamed(context, '/postpage'),
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (_) =>
+                                          PostPage(channel: channel)))
                             };
                     },
                     child: const Text(
