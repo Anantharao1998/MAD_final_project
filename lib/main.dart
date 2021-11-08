@@ -48,6 +48,7 @@ class signInPage extends StatefulWidget {
 
 class _SignInPageState extends State<signInPage> {
   TextEditingController username = TextEditingController();
+
   final channel =
       IOWebSocketChannel.connect('ws://besquare-demo.herokuapp.com');
 
@@ -93,7 +94,9 @@ class _SignInPageState extends State<signInPage> {
                       (username.text.isEmpty)
                           ? {print('username is empty')}
                           : {
-                              _signInUser(),
+                              context
+                                  .read<MainCubit>()
+                                  .login(username.text, channel),
                               Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
@@ -117,10 +120,5 @@ class _SignInPageState extends State<signInPage> {
         ),
       ),
     );
-  }
-
-  _signInUser() {
-// Sending user sign in request
-    context.read<MainCubit>().login(username.text);
   }
 }

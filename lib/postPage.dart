@@ -34,7 +34,6 @@ class _PostPageState extends State<PostPage> {
       setState(() {
         posts = decodedMessage['data']['posts'];
       });
-      channel.sink.close();
     });
 
     channel.sink.add('{"type": "get_posts"}');
@@ -178,24 +177,21 @@ class _PostPageState extends State<PostPage> {
                                         builder: (context, state) {
                                           return AlertDialog(
                                             title: const Text("Delete Post"),
-                                            content: Column(
-                                              // ignore: prefer_const_literals_to_create_immutables
-                                              children: [
-                                                TextFormField(
-                                                  controller: name,
-                                                ),
-                                                Text(
-                                                    "Do you want to delete this post?"),
-                                              ],
-                                            ),
+                                            content: Text(
+                                                "Do you want to delete this post?"),
                                             actions: [
                                               TextButton(
                                                 onPressed: () {
                                                   setState(() {
                                                     context
                                                         .read<MainCubit>()
-                                                        .delete(posts[index]
-                                                            ['_id']);
+                                                        .delete(
+                                                            posts[index]['_id'],
+                                                            channel);
+
+                                                    // context
+                                                    //     .read<MainCubit>()
+                                                    //     .openChannel(channel);
 
                                                     Navigator.of(context).pop();
                                                   });

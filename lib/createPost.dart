@@ -104,9 +104,8 @@ class _CreatePost extends State<CreatePost> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      context
-                          .read<MainCubit>()
-                          .createPost(title.text, description.text, image.text);
+                      context.read<MainCubit>().createPost(
+                          title.text, description.text, image.text, channel);
 
                       Navigator.pop(context);
                     },
