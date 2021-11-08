@@ -74,7 +74,11 @@ class _PostPageState extends State<PostPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextButton(onPressed: () {}, child: Text('About Our App')),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, 'aboutPage');
+                      },
+                      child: Text('About Our App')),
                 ],
               )
             ],
@@ -278,7 +282,6 @@ class _PostPageState extends State<PostPage> {
                                   ),
                                 ),
                               );
-                              // Move to post details page
                             },
                             onLongPress: () {
                               showDialog(

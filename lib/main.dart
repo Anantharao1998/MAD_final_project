@@ -1,6 +1,7 @@
 // ignore_for_file: camel_case_types, avoid_print, prefer_const_constructors, unnecessary_null_comparison, unrelated_type_equality_checks
 
 import 'package:final_project/PostDetail.dart';
+import 'package:final_project/aboutPage.dart';
 import 'package:final_project/cubit/main_cubit.dart';
 import 'package:final_project/postPage.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
               title: '',
               description: '',
             ),
+        'aboutPage': (context) => Aboutpage()
       },
       debugShowCheckedModeBanner: false,
       title: 'Final Project',
