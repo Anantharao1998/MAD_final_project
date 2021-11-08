@@ -1,4 +1,4 @@
-// ignore_for_file: file_names, prefer_const_constructors, avoid_print, unnecessary_string_interpolations, annotate_overrides, no_logic_in_create_state
+// ignore_for_file: file_names, prefer_const_constructors, avoid_print, unnecessary_string_interpolations, annotate_overrides, no_logic_in_create_state, unused_local_variable
 
 import 'dart:convert';
 import 'package:final_project/PostDetail.dart';
@@ -38,10 +38,6 @@ class _PostPageState extends State<PostPage> {
 
     channel.sink.add('{"type": "get_posts"}');
   }
-
-  // sortDate() {
-  //   for (int i = 0; i >= posts.length; i++) {}
-  // }
 
   @override
   void initState() {
@@ -96,7 +92,7 @@ class _PostPageState extends State<PostPage> {
                     }
                   });
                 },
-                icon: Icon(Icons.face_outlined)),
+                icon: Icon(Icons.favorite)),
             IconButton(
               onPressed: () {
                 Navigator.push(
@@ -148,12 +144,12 @@ class _PostPageState extends State<PostPage> {
           backgroundColor: Colors.purpleAccent,
         ),
         body: (favouriteClicked == false)
-            ? BlocBuilder<MainCubit, String>(
+            ? BlocBuilder<MainCubit, dynamic>(
                 builder: (context, index) {
-                  print(posts.length);
                   return ListView.builder(
                       itemCount: posts.length,
                       itemBuilder: (context, index) {
+                        int reversedIndex = posts.length - 1 - index;
                         return Card(
                           elevation: 10.0,
                           child: InkWell(
@@ -162,10 +158,11 @@ class _PostPageState extends State<PostPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => PostDetails(
-                                    name: posts[index]['author'],
-                                    title: posts[index]['title'],
-                                    description: posts[index]['description'],
-                                    url: posts[index]['image'],
+                                    name: posts[reversedIndex]['author'],
+                                    title: posts[reversedIndex]['title'],
+                                    description: posts[reversedIndex]
+                                        ['description'],
+                                    url: posts[reversedIndex]['image'],
                                   ),
                                 ),
                               );
@@ -190,12 +187,9 @@ class _PostPageState extends State<PostPage> {
                                                     context
                                                         .read<MainCubit>()
                                                         .delete(
-                                                            posts[index]['_id'],
+                                                            posts[reversedIndex]
+                                                                ['_id'],
                                                             channel);
-
-                                                    // context
-                                                    //     .read<MainCubit>()
-                                                    //     .openChannel(channel);
 
                                                     Navigator.of(context).pop();
                                                   });
@@ -219,37 +213,40 @@ class _PostPageState extends State<PostPage> {
                                 padding: EdgeInsets.all(10.0),
                                 child: ListTile(
                                   leading: CircleAvatar(
-                                    backgroundImage: NetworkImage(Uri.parse(
-                                                    posts[index]['image'])
-                                                .isAbsolute &&
-                                            posts[index].containsKey('image')
-                                        ? '${posts[index]['image']}'
-                                        : 'https://image.freepik.com/free-vector/bye-bye-cute-emoji-cartoon-character-yellow-backround_106878-540.jpg'),
-                                  ),
+                                      backgroundImage: NetworkImage(Uri.parse(
+                                                      posts[reversedIndex]
+                                                          ['image'])
+                                                  .isAbsolute &&
+                                              posts[reversedIndex]
+                                                  .containsKey('image')
+                                          ? '${posts[reversedIndex]['image']}'
+                                          : 'https://advertisermirror.com/wp-content/uploads/2021/02/Page-Not-Found-Error-404-329x247.png')),
                                   title: Text(
-                                    '${posts[index]["title"].toString().characters.take(20)}',
+                                    '${posts[reversedIndex]["title"].toString().characters.take(20)}',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold),
                                   ),
                                   subtitle: Text(
-                                      'Created by ${posts[index]["author"].toString().characters.take(15)} on ${posts[index]["date"].toString().characters.take(10)}'),
+                                      'Created by ${posts[reversedIndex]["author"].toString().characters.take(15)} on ${posts[reversedIndex]["date"].toString().characters.take(10)}'),
                                   trailing: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
                                       FavoriteButton(
+                                          iconColor: Colors.blue,
                                           iconSize: 30.0,
                                           valueChanged: (isFavorite) {
                                             setState(() {
                                               isFavorite = true;
-                                              if (favoritePosts
-                                                  .contains(posts[index])) {
-                                                favoritePosts
-                                                    .remove(posts[index]);
+                                              if (favoritePosts.contains(
+                                                  posts[reversedIndex])) {
+                                                favoritePosts.remove(
+                                                    posts[reversedIndex]);
                                                 print('item already added');
                                               } else {
-                                                favoritePosts.add(posts[index]);
+                                                favoritePosts
+                                                    .add(posts[reversedIndex]);
                                               }
                                               print(favoritePosts);
                                             });
@@ -267,6 +264,8 @@ class _PostPageState extends State<PostPage> {
                   return ListView.builder(
                       itemCount: favoritePosts.length,
                       itemBuilder: (context, index) {
+                        int reversedIndex = posts.length - 1 - index;
+
                         return Card(
                           elevation: 10.0,
                           child: InkWell(
@@ -275,10 +274,11 @@ class _PostPageState extends State<PostPage> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => PostDetails(
-                                    name: posts[index]['author'],
-                                    title: posts[index]['title'],
-                                    description: posts[index]['description'],
-                                    url: posts[index]['image'],
+                                    name: posts[reversedIndex]['author'],
+                                    title: posts[reversedIndex]['title'],
+                                    description: posts[reversedIndex]
+                                        ['description'],
+                                    url: posts[reversedIndex]['image'],
                                   ),
                                 ),
                               );
@@ -300,7 +300,8 @@ class _PostPageState extends State<PostPage> {
                                                 onPressed: () {
                                                   setState(() {
                                                     context.read().delete(
-                                                        posts[index]['_id']);
+                                                        posts[reversedIndex]
+                                                            ['_id']);
 
                                                     Navigator.of(context).pop();
                                                   });
@@ -325,19 +326,21 @@ class _PostPageState extends State<PostPage> {
                                 child: ListTile(
                                   leading: CircleAvatar(
                                     backgroundImage: NetworkImage(Uri.parse(
-                                                    posts[index]['image'])
+                                                    posts[reversedIndex]
+                                                        ['image'])
                                                 .isAbsolute &&
-                                            posts[index].containsKey('image')
-                                        ? '${posts[index]['image']}'
+                                            posts[reversedIndex]
+                                                .containsKey('image')
+                                        ? '${posts[reversedIndex]['image']}'
                                         : 'https://image.freepik.com/free-vector/bye-bye-cute-emoji-cartoon-character-yellow-backround_106878-540.jpg'),
                                   ),
                                   title: Text(
-                                    '${posts[index]["title"].toString().characters.take(20)}',
+                                    '${posts[reversedIndex]["title"].toString().characters.take(20)}',
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold),
                                   ),
                                   subtitle: Text(
-                                      'Created by ${posts[index]["author"].toString().characters.take(15)} on ${posts[index]["date"].toString().characters.take(10)}'),
+                                      'Created by ${posts[reversedIndex]["author"].toString().characters.take(15)} on ${posts[reversedIndex]["date"].toString().characters.take(10)}'),
                                 )),
                           ),
                         );

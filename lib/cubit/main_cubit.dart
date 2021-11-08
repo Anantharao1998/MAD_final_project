@@ -7,23 +7,9 @@ class MainCubit extends Cubit<String> {
   List posts = [];
   dynamic decodedMessage;
 
-  // final channel =
-  //     IOWebSocketChannel.connect('ws://besquare-demo.herokuapp.com');
-
-  // void openChannel(channel) {
-  //   channel.stream.listen((message) {
-  //     decodedMessage = jsonDecode(message);
-  //     print(decodedMessage);
-  //   });
-  // }
-
   void login(name, channel) {
     channel.sink.add('{"type": "sign_in", "data": {"name": "$name"}}');
   }
-
-  // void getPosts() {
-  //   channel.sink.add('{"type": "get_posts"}');
-  // }
 
   void delete(_id, channel) {
     channel.sink.add('{"type": "delete_post", "data": {"postId": "$_id"}}');
